@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Merge into FrameLayout -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/content_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Note that the content description should come from the package name etc. -->
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/process_detail_default_icon_size"
+            android:layout_height="@dimen/process_detail_default_icon_size"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/process_detail_icon_margin"
+            android:contentDescription="@null"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/icon"
+            android:layout_marginEnd="@dimen/process_detail_icon_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/application_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="@dimen/process_detail_package_name_margin_bottom"/>
+
+            <TextView
+                android:id="@+id/package_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="14sp"
+                android:textColor="@color/livefront_grey_dark" />
+
+        </LinearLayout>
+
+   </RelativeLayout>
+
+</merge>

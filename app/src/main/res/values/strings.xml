@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Process Killer</string>
+
+    <!-- Process Types -->
+    <string name="process_type_recent">Recent</string>
+    <string name="process_type_last_day">Today</string>
+
+    <!-- Usage stats permission -->
+    <string name="enable_usage_stats_title">Enable permission</string>
+    <string name="enable_usage_stats_message">Click OK to go to settings to enable the permission necessary to run this app.</string>
+    <string name="enable_usage_stats_ok_button">OK</string>
+
+    <!-- Killing process feedback -->
+    <string name="snackbar_process_killed_message">Process killed if running</string>
+    <string name="snackbar_process_killed_action">Go to app</string>
+    <string name="error_application_can_not_be_launched">That application can not be launched</string>
+
+</resources>
