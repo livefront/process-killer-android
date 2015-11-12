@@ -26,9 +26,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Displays a list of packages with recent activity for a time period defined by the given
@@ -48,12 +50,6 @@ public class ProcessDetailFragment extends Fragment {
         int LAST_HOUR = 3;
         int RECENT = 4;
     }
-
-    private static final int SECONDS_TO_MS = 1000;
-    private static final int MINUTE_TO_MS = 60 * SECONDS_TO_MS;
-    private static final int TEN_MINUTES_MS = 10 * MINUTE_TO_MS;
-    private static final int ONE_HOUR_MS = 60 * MINUTE_TO_MS;
-    private static final int ONE_DAY_MS = 24 * ONE_HOUR_MS;
 
     private static final String ARG_PROCESS_TYPE = "argProcessType";
 
@@ -155,17 +151,18 @@ public class ProcessDetailFragment extends Fragment {
 
     private void refreshData() {
         long start;
-        long now = System.currentTimeMillis();
+        long now = Calendar.getInstance().getTimeInMillis();
         switch (mProcessType) {
             case ProcessType.LAST_DAY:
-                start = now - ONE_DAY_MS;
+                start = now - TimeUnit.DAYS.toMillis(1);
                 break;
             case ProcessType.LAST_HOUR:
-                start = now - ONE_HOUR_MS;
+                start = now - TimeUnit.HOURS.toMillis(1);
                 break;
             case ProcessType.RECENT:
             default:
-                start = now - TEN_MINUTES_MS;
+                // Within last 10 minutes
+                start = now - TimeUnit.MINUTES.toMillis(10);
                 break;
         }
 
