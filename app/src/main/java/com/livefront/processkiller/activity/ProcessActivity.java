@@ -93,7 +93,7 @@ public class ProcessActivity extends AppCompatActivity {
         mViews.tabLayout.setupWithViewPager(mViews.viewPager);
     }
 
-    public static class TabItem {
+    private static class TabItem {
 
         private Fragment mFragment;
         private String mLabel;
@@ -114,7 +114,7 @@ public class ProcessActivity extends AppCompatActivity {
 
     }
 
-    public static class TabPagerAdapter extends FragmentPagerAdapter {
+    private static class TabPagerAdapter extends FragmentPagerAdapter {
 
         private List<TabItem> mTabItems;
 
