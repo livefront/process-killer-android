@@ -92,8 +92,10 @@ public class ProcessDetailFragment extends Fragment {
 
     static class Views {
         RecyclerView recyclerView;
+        View spinner;
         Views(View root) {
             recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+            spinner = root.findViewById(R.id.spinner);
         }
     }
 
@@ -183,6 +185,9 @@ public class ProcessDetailFragment extends Fragment {
         long start;
         long now = Calendar.getInstance().getTimeInMillis();
         switch (mProcessType) {
+            case ProcessType.ALL:
+                start = 0;
+                break;
             case ProcessType.LAST_DAY:
                 start = now - TimeUnit.DAYS.toMillis(1);
                 break;
@@ -195,6 +200,10 @@ public class ProcessDetailFragment extends Fragment {
                 start = now - TimeUnit.MINUTES.toMillis(10);
                 break;
         }
+
+        // We'll only show a spinner if we are not currently showing any item; otherwise we'll just
+        // let the list update when the data comes in
+        showProgress(mProcessDetails.isEmpty());
 
         if (mProcessDetailTask != null) {
             mProcessDetailTask.cancel(true);
@@ -211,6 +220,7 @@ public class ProcessDetailFragment extends Fragment {
                             return;
                         }
                         mProcessDetailTask = null;
+                        showProgress(false);
 
                         // Filter out ignored packages
                         mProcessDetails.clear();
@@ -263,4 +273,9 @@ public class ProcessDetailFragment extends Fragment {
             }
         });
     }
+
+    private void showProgress(boolean show) {
+        mViews.spinner.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
 }

@@ -46,7 +46,7 @@ public class ProcessDetailTask extends AsyncTask<Void, Void, List<ProcessDetail>
         // Get list of any active packages during the given time frame
         List<ProcessDetail> processDetails = new ArrayList<>();
         Map<String, UsageStats> usageStatsList = mUsageStatsManager
-                .queryAndAggregateUsageStats(mStartTime, mEndTime);
+                .queryAndAggregateUsageStats(0, mEndTime);
         for (String packageName : usageStatsList.keySet()) {
             ApplicationInfo applicationInfo;
             try {
