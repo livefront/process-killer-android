@@ -3,6 +3,7 @@ package com.livefront.processkiller.fragment;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.usage.UsageStatsManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.livefront.processkiller.R;
 import com.livefront.processkiller.adapter.ProcessDetailAdapter;
@@ -37,6 +39,8 @@ import java.util.concurrent.TimeUnit;
  * {@link com.livefront.processkiller.fragment.ProcessDetailFragment.ProcessType}
  */
 public class ProcessDetailFragment extends Fragment {
+
+    public static final String TAG = ProcessDetailFragment.class.getSimpleName();
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -149,6 +153,32 @@ public class ProcessDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Attempts to find (and launch) an intent to resume an application from its last known running
+     * task. In most cases this should simulate clicking on the application on the Recents screen.
+     *
+     * @param packageName the package name of the application to resume
+     */
+    private void launchIntentForPackage(@NonNull String packageName) {
+        Intent intent = mPackageManager.getLaunchIntentForPackage(packageName);
+        if (intent == null) {
+            Toast.makeText(
+                    getContext(),
+                    R.string.error_application_can_not_be_launched,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        // Clear the package from the intent, as this tends to lead to better results when trying to
+        // restart the last running task
+        intent.setPackage(null);
+
+        startActivity(intent);
+    }
+
     private void refreshData() {
         long start;
         long now = Calendar.getInstance().getTimeInMillis();
@@ -221,6 +251,14 @@ public class ProcessDetailFragment extends Fragment {
                         mViews.recyclerView,
                         R.string.snackbar_process_killed_message,
                         Snackbar.LENGTH_LONG)
+                        .setAction(
+                                R.string.snackbar_process_killed_action,
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        launchIntentForPackage(processDetail.getPackageName());
+                                    }
+                                })
                         .show();
             }
         });
