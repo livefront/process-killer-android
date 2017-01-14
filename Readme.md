@@ -24,7 +24,7 @@ and build in Android Studio.
 ## Compatibility
 
 * **Minimum SDK**: 21
-* **Target SDK**: 23
+* **Target SDK**: 25
 * **Device Types**: Phone & Tablet
 * **Devices Supported**: All
 * **Orientations Supported**: Portrait and landscape
