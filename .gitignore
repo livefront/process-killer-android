@@ -8,6 +8,7 @@ build
 captures
 gen
 local.properties
+upload-keystore.properties
 
 *.apk
 *.ap_
