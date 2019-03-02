@@ -20,6 +20,18 @@ Clone the repo
 
 and build in Android Studio.
 
+### Setup for release signing
+
+If you need to create a signed APK for release to the Google Play Store, you will need to create a file called `upload-keystore.properties` at the root of the project containing the various properties needed to sign the app. The file will follow the format:
+
+```
+keyAlias = Enter-key-alias-here
+keyPassword = Enter-key-password-here
+storePassword = Enter-key-store-password-here
+```
+
+The final app signing is controlled through Google Play. The signing key stored in the repo is just the _upload key_, not the actual _release key_. If the alias or any passwords used above are lost, a new upload key can be created and used as long as it's updated on the Google Play Console.
+
 <a name="compatibility"></a>
 ## Compatibility
 
