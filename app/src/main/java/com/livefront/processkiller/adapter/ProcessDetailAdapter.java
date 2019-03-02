@@ -2,6 +2,7 @@ package com.livefront.processkiller.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,4 +69,12 @@ public class ProcessDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
         mListener = listener;
     }
 
+    public void updateItems(@NonNull List<ProcessDetail> items) {
+        ProcessDetailsDiffCallback diffCallback = new ProcessDetailsDiffCallback(
+                mProcessDetails,
+                items);
+        DiffUtil.calculateDiff(diffCallback).dispatchUpdatesTo(this);
+        mProcessDetails.clear();
+        mProcessDetails.addAll(items);
+    }
 }

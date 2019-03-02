@@ -223,22 +223,22 @@ public class ProcessDetailFragment extends Fragment {
                         showProgress(false);
 
                         // Filter out ignored packages
-                        mProcessDetails.clear();
+                        List<ProcessDetail> newProcessDetails = new ArrayList<>();
                         for (ProcessDetail processDetail : processDetails) {
                             if (mIgnoredPackages.contains(processDetail.getPackageName())) {
                                 continue;
                             }
 
-                            mProcessDetails.add(processDetail);
+                            newProcessDetails.add(processDetail);
                         }
 
                         // Sort the data depending on the process type and update the adapter
                         Collections.sort(
-                                mProcessDetails,
+                                newProcessDetails,
                                 mProcessType == ProcessType.RECENT ?
                                         TIMESTAMP_COMPARATOR :
                                         ALPHABETIC_COMPARATOR);
-                        mAdapter.notifyDataSetChanged();
+                        mAdapter.updateItems(newProcessDetails);
                     }
                 }
         );
