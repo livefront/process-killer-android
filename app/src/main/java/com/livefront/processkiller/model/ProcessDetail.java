@@ -1,7 +1,7 @@
 package com.livefront.processkiller.model;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Holds data about a recently run process related to the given package.
