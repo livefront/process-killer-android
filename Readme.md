@@ -39,7 +39,7 @@ The final app signing is controlled through Google Play. The signing key stored 
 ## Compatibility
 
 * **Minimum SDK**: 21
-* **Target SDK**: 28
+* **Target SDK**: 34
 * **Device Types**: Phone & Tablet
 * **Devices Supported**: All
 * **Orientations Supported**: Portrait and landscape
