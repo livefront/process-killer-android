@@ -1,13 +1,13 @@
 package com.livefront.processkiller.view;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import com.livefront.processkiller.R;
 import com.livefront.processkiller.model.ProcessDetail;
 

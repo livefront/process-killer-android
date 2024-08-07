@@ -5,8 +5,8 @@ import android.app.usage.UsageStatsManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 import com.livefront.processkiller.model.ProcessDetail;
 
 import java.util.ArrayList;
