@@ -2,8 +2,8 @@
 
 A simple app for testing application state saving and restoring.
 
-**Important Android 14 Update**
-Due to changes in the `ActivityManager.killBackgroundProcess` API, the app does not work on Android version 14.0 and above. See [ActivityManager docs](https://developer.android.com/reference/android/app/ActivityManager#killBackgroundProcesses(java.lang.String)) for more details.
+> [!CAUTION]
+> **Important Android 14 Update:** Due to changes in the `ActivityManager.killBackgroundProcess` API, the app does not work on Android version 14.0 and above. See [ActivityManager docs](https://developer.android.com/reference/android/app/ActivityManager#killBackgroundProcesses(java.lang.String)) for more details.
 
 <img src="art/process-killer-demo.gif" alt="Demo" width="400px">
 
