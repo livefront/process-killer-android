@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.livefront.processkiller.adapter.ProcessDetailAdapter.OnProcessDetailC
 import com.livefront.processkiller.model.ProcessDetail;
 import com.livefront.processkiller.task.ProcessDetailTask;
 
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -87,7 +91,9 @@ public class ProcessDetailFragment extends Fragment {
     private ProcessDetailTask mProcessDetailTask;
     private PackageManager mPackageManager;
     private List<String> mIgnoredPackages = new ArrayList<>();
+    private Executor mExecutor = Executors.newCachedThreadPool();
     private UsageStatsManager mUsageStatsManager;
+    private Snackbar mSnackBar = null;
     private Views mViews;
 
     static class Views {
@@ -153,6 +159,60 @@ public class ProcessDetailFragment extends Fragment {
             mProcessDetailTask.cancel(true);
             mProcessDetailTask = null;
         }
+    }
+
+    private void killProcess(@NonNull String packageName) {
+        mSnackBar = Snackbar.make(
+                mViews.recyclerView,
+                R.string.snackbar_process_killing,
+                Snackbar.LENGTH_INDEFINITE);
+        mSnackBar.show();
+
+        mExecutor.execute(() -> {
+            sendAdbCommand("pm grant com.livefront.processkiller "
+                    + "android.permission.WRITE_SECURE_SETTINGS "
+                    + "&> /dev/null");
+
+            if (!sendAdbCommand("devices")) {
+                runOnUiThread(() -> {
+                    mSnackBar.setText(R.string.snackbar_process_killing_failure_message)
+                            .setDuration(Snackbar.LENGTH_LONG)
+                            .show();
+                });
+                return;
+            }
+            if (!sendAdbCommand("shell am kill " + packageName)) {
+                runOnUiThread(() -> {
+                    mSnackBar.setText(R.string.snackbar_process_killing_failure_message)
+                            .setDuration(Snackbar.LENGTH_LONG)
+                            .show();
+                });
+                return;
+            }
+
+            runOnUiThread(() -> {
+                // We can defer the remaining logic to the legacy code
+                killProcessLegacy(packageName);
+            });
+        });
+    }
+
+    private void killProcessLegacy(@NonNull String packageName) {
+        // This is no-op for Android 14+
+        mActivityManager.killBackgroundProcesses(packageName);
+
+        if (mSnackBar == null) {
+            mSnackBar = Snackbar.make(
+                            mViews.recyclerView,
+                            R.string.snackbar_process_killed_action,
+                            Snackbar.LENGTH_LONG);
+        }
+        mSnackBar.setText(R.string.snackbar_process_killed_action)
+                .setDuration(Snackbar.LENGTH_LONG)
+                .setAction(
+                        R.string.snackbar_process_killed_action,
+                        v -> launchIntentForPackage(packageName))
+                .show();
     }
 
     /**
@@ -245,6 +305,14 @@ public class ProcessDetailFragment extends Fragment {
         mProcessDetailTask.execute();
     }
 
+    private void runOnUiThread(@NonNull Runnable runnable) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(runnable);
+    }
+
     private void setupRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 getActivity(),
@@ -256,22 +324,29 @@ public class ProcessDetailFragment extends Fragment {
         mAdapter.setOnProcessDetailClickListener(new OnProcessDetailClickListener() {
             @Override
             public void onProcessDetailClick(@NonNull final ProcessDetail processDetail) {
-                mActivityManager.killBackgroundProcesses(processDetail.getPackageName());
-                Snackbar.make(
-                        mViews.recyclerView,
-                        R.string.snackbar_process_killed_message,
-                        Snackbar.LENGTH_LONG)
-                        .setAction(
-                                R.string.snackbar_process_killed_action,
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        launchIntentForPackage(processDetail.getPackageName());
-                                    }
-                                })
-                        .show();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    killProcessLegacy(processDetail.getPackageName());
+                } else {
+                    killProcess(processDetail.getPackageName());
+                }
             }
         });
+    }
+
+    private boolean sendAdbCommand(String command) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return false;
+        }
+        // Note that this makes use of ADB libraries from
+        // https://github.com/tytydraco/LADB/tree/main/app/src/main/jniLibs
+        String adbPath = activity.getApplicationInfo().nativeLibraryDir + "/libadb.so";
+        String[] cmdLine = {"sh", "-c", adbPath + " " + command};
+        try {
+            return Runtime.getRuntime().exec(cmdLine).waitFor() == 0;
+        } catch (IOException | InterruptedException e) {
+            return false;
+        }
     }
 
     private void showProgress(boolean show) {
