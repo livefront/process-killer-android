@@ -13,6 +13,8 @@
     <!-- Killing process feedback -->
     <string name="snackbar_process_killed_message">Process killed if running</string>
     <string name="snackbar_process_killed_action">Go to app</string>
+    <string name="snackbar_process_killing">Killing</string>
+    <string name="snackbar_process_killing_failure_message">Failed to kill</string>
     <string name="error_application_can_not_be_launched">That application can not be launched</string>
 
 </resources>
